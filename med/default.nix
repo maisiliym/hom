@@ -2,6 +2,7 @@
 let
   inherit (builtins) readFile toJSON;
   inherit (kor) optionalString optionals;
+  inherit (uyrld) toFormat;
   inherit (krimyn.spinyrz) izUniksDev iuzColemak;
 
   inherit (pkgs) mksh;
@@ -105,6 +106,26 @@ in
 
       "gh/config.yml".text = toJSON {
         gitProtocol = "ssh";
+      };
+
+      ".config/rustfmt/rustfmt.toml".source = toFormat {
+        neim = "rustfmt.toml";
+        valiu = {
+          edition = "2021";
+        };
+      };
+
+      ".config/luaformatter/config.yaml".source = toFormat {
+        neim = "luaFormatterConfig.yaml";
+        format = "yaml";
+        valiu = {
+          indent_width = 2;
+          continuation_indent_width = 2;
+          align_args = false;
+          align_parameter = false;
+          align_table_field = false;
+          spaces_inside_table_braces = true;
+        };
       };
 
       # start('pythonConfigs')

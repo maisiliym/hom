@@ -1,28 +1,40 @@
-vim.o.clipboard = "unnamedplus"
-vim.o.expandtab = true
-vim.o.ignorecase = true
-vim.o.smartcase = true
-vim.o.termguicolors = true
-vim.o.autoread = true
-vim.o.linebreak = true
-vim.o.breakindent = true
-vim.o.showbreak = '  '
-vim.o.mouse = "a"
-vim.o.title = true
-vim.o.wrap = true
-vim.o.cursorline = false
+local o = vim.o
+local g = vim.g
+
+o.clipboard = "unnamedplus"
+o.expandtab = true
+o.ignorecase = true
+o.smartcase = true
+o.termguicolors = true
+o.autoread = true
+o.linebreak = true
+o.breakindent = true
+o.showbreak = '  '
+o.mouse = "a"
+o.title = true
+o.wrap = true
+o.cursorline = false
 
 -- Disabling slow/incorrect features
-vim.g.loaded_matchparen = 1 
-vim.g.did_load_ftplugin = 1 
-vim.g.lspconfig = 1 -- avoid incorrect build system
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
-vim.g.did_indent_on = 1
+g.loaded_matchparen = 1
+g.did_load_ftplugin = 1
+g.lspconfig = 1 -- avoid incorrect build system
+g.loaded_netrw = 1
+g.loaded_netrwPlugin = 1
+g.did_indent_on = 1
 command([[let did_indent_on = 1]])
 -- command([[syntax off]]) -- missing some treesitter parsers
 
-vim.g.cursorhold_updatetime = 500
+g.cursorhold_updatetime = 500
+
+-- zoxide
+nmap('<leader>cf', [[:Zi <CR>]])
+vim.api.nvim_exec([[
+augroup Zoxide
+autocmd!
+autocmd DirChanged * call zoxide#exec(["add", v:event['cwd'] ])
+augroup END
+  ]], true)
 
 command([[au BufRead,BufNewFile *.aski set filetype=ron]])
 command([[au BufRead,BufNewFile flake.lock set filetype=json]])
@@ -30,126 +42,124 @@ command([[au BufRead,BufNewFile *.nix set filetype=nix]])
 command([[autocmd VimEnter * :silent exec "!kill -s SIGWINCH $PPID"]])
 
 command('augroup explorer')
-command([[au BufReadCmd file://* :lua niovi.fileUrlEdit(vim.fn.expand("<amatch>"))]])
+command([[au BufReadCmd file://* :lua niovi.fileUrlEdit(fn.expand("<amatch>"))]])
 command('augroup end')
 
 require('nvim-autopairs').setup()
 require('gitsigns').setup()
+require'bufferline'.setup()
 
 niovi.fozi = require('fzf-commands')
 
-vim.g.nvim_tree_quit_on_open = 1
-vim.g.nvim_tree_hide_dotfiles = 1
-vim.g.nvim_tree_width_allow_resize = 1
-vim.g.nvim_tree_show_icons = {
-  git = 0,
-  folders = 1,
-  files = 1,
-}
+g.nvim_tree_quit_on_open = 1
+g.nvim_tree_hide_dotfiles = 1
+g.nvim_tree_width_allow_resize = 1
+g.nvim_tree_show_icons = { git = 0, folders = 1, files = 1 }
 niovi.tri = require('nvim-tree')
 niovi.tri.lib = require('nvim-tree.lib')
 
-local actions = require'lir.actions'
+local actions = require 'lir.actions'
 require'lir'.setup {
   show_hidden_files = false,
   devicons_enable = true,
   mappings = {
-    ['l']     = actions.edit,
+    ['l'] = actions.edit,
     ['<C-s>'] = actions.split,
     ['<C-v>'] = actions.vsplit,
     ['<C-t>'] = actions.tabedit,
-    ['h']     = actions.up,
-    ['q']     = actions.quit,
-    ['K']     = actions.mkdir,
-    ['N']     = actions.newfile,
-    ['R']     = actions.rename,
-    ['@']     = actions.cd,
-    ['Y']     = actions.yank_path,
-    ['.']     = actions.toggle_show_hidden,
+    ['h'] = actions.up,
+    ['q'] = actions.quit,
+    ['K'] = actions.mkdir,
+    ['N'] = actions.newfile,
+    ['R'] = actions.rename,
+    ['@'] = actions.cd,
+    ['Y'] = actions.yank_path,
+    ['.'] = actions.toggle_show_hidden
   }
 }
 
-local previewers = require'telescope.previewers'
+local previewers = require 'telescope.previewers'
 
 require('telescope').setup {
-  extensions = { };
+  extensions = {},
   defaults = {
-    file_previewer = previewers.vim_buffer_cat.new;
-    grep_previewer = previewers.vim_buffer_vimgrep.new;
-    qflist_previewer = previewers.vim_buffer_qflist.new;
+    file_previewer = previewers.vim_buffer_cat.new,
+    grep_previewer = previewers.vim_buffer_vimgrep.new,
+    qflist_previewer = previewers.vim_buffer_qflist.new,
     width = 0.95,
     preview_cutoff = 120,
     results_height = 1,
-    results_width = 1,
-  };
+    results_width = 1
+  }
 };
 
 niovi.telescope = require('telescope.builtin')
 
 -- start('completion')
-vim.o.completeopt = [[noinsert,menuone]]
-vim.g.completion_enable_auto_popup = 1
-vim.g.completion_timer_cycle = 120
-vim.g.completion_enable_auto_paren = 1
-vim.g.completion_enable_snippet = 'UltiSnips'
-vim.g.completion_auto_change_source = 1
+imap('<tab>', [[<Plug>(completion_smart_tab)]])
+imap('<s-tab>', [[<Plug>(completion_smart_s_tab)]])
+inoremapExpr('<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]])
+inoremapExpr('<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]])
+command('set shortmess+=c')
+o.completeopt = [[noinsert,menuone,noselect]]
+g.completion_enable_auto_popup = 1
+g.completion_timer_cycle = 120
+g.completion_enable_auto_paren = 1
+g.completion_enable_snippet = 'UltiSnips'
+g.completion_auto_change_source = 1
 command([[autocmd BufEnter * lua require'completion'.on_attach()]])
-vim.g.completion_chain_complete_list = {
+g.completion_chain_complete_list = {
   default = {
     default = {
-      { complete_items = { "snippet" } },
-      { complete_items = { "lsp" } },
+      { complete_items = { "lsp" } }, { complete_items = { "snippet" } },
       { complete_items = { 'buffers' } },
-      { complete_items = {"path"}, triggered_only = {'/'} },
+      { complete_items = { "path" }, triggered_only = { '/' } }
 
     },
-    comment = {
-      { complete_items = { 'buffers' } },
-    },
+    comment = { { complete_items = { 'buffers' } } },
     string = {
       { complete_items = { 'buffers' } },
-      { complete_items = {"path"}, triggered_only = {'/'} },
-    },
-  },
+      { complete_items = { "path" }, triggered_only = { '/' } }
+    }
+  }
 }
 -- end('completion')
 -- start('legacy')
-vim.g.rooter_silent_chdir = true
+g.rooter_silent_chdir = true
 
-vim.g.vim_markdown_folding_disabled = true
-vim.g.vim_markdown_follow_anchor = true
-vim.g.vim_markdown_fenced_languages = {
-  'c++=cpp',  'rust', 'viml=vim', 'bash=sh', 'ini=dosini', 'c'
+g.vim_markdown_folding_disabled = true
+g.vim_markdown_follow_anchor = true
+g.vim_markdown_fenced_languages = {
+  'c++=cpp', 'rust', 'viml=vim', 'bash=sh', 'ini=dosini', 'c'
 }
 
-vim.g.indent_guides_guide_size = true
-vim.g.indent_guides_enable_on_vim_startup = true
-vim.g.indent_guides_exclude_filetypes = {
-  'help', 'w3m', 'man', 'markdown', 'skim', 'neoterm', 'vista',
-  'netrw', 'defx', 'toggleterm'
+g.indent_guides_guide_size = true
+g.indent_guides_enable_on_vim_startup = true
+g.indent_guides_exclude_filetypes = {
+  'help', 'w3m', 'man', 'markdown', 'skim', 'neoterm', 'vista', 'netrw', 'defx',
+  'toggleterm'
 }
 
-vim.g.fzf_buffers_jump = true
-vim.g.fzf_action = {
+g.fzf_buffers_jump = true
+g.fzf_action = {
   ['ctrl-t'] = 'tab split',
   ['ctrl-x'] = 'split',
-  ['ctrl-v'] = 'vsplit',
+  ['ctrl-v'] = 'vsplit'
 }
-vim.g.fzf_layout = { down = '~61%' }
-vim.g.fzf_colors = {
-  fg =      {'fg', 'Normal'},
-  bg =      {'bg', 'Normal'},
-  hl =      {'fg', 'Comment'},
-  ['fg+'] =     {'fg', 'CursorLine', 'CursorColumn', 'Normal'},
-  ['bg+'] =     {'bg', 'CursorLine', 'CursorColumn'},
-  ['hl+'] =     {'fg', 'Statement'},
-  info =    {'fg', 'PreProc'},
-  border =  {'fg', 'Ignore'},
-  prompt =  {'fg', 'Conditional'},
-  pointer = {'fg', 'Exception'},
-  marker =  {'fg', 'Keyword'},
-  spinner = {'fg', 'Label'},
-  header =  {'fg', 'Comment'}
+g.fzf_layout = { down = '~61%' }
+g.fzf_colors = {
+  fg = { 'fg', 'Normal' },
+  bg = { 'bg', 'Normal' },
+  hl = { 'fg', 'Comment' },
+  ['fg+'] = { 'fg', 'CursorLine', 'CursorColumn', 'Normal' },
+  ['bg+'] = { 'bg', 'CursorLine', 'CursorColumn' },
+  ['hl+'] = { 'fg', 'Statement' },
+  info = { 'fg', 'PreProc' },
+  border = { 'fg', 'Ignore' },
+  prompt = { 'fg', 'Conditional' },
+  pointer = { 'fg', 'Exception' },
+  marker = { 'fg', 'Keyword' },
+  spinner = { 'fg', 'Label' },
+  header = { 'fg', 'Comment' }
 }
 -- end('legacy')
--- vim:sw=2 ts=2 et

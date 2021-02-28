@@ -1,9 +1,12 @@
 { kor, pkgs, uyrld, krimyn, config, darkOrLight, hyraizyn, ... }:
 let
-  inherit (builtins) concatStringsSep readFile elem;
-  inherit (kor) optionalString optionals mkIf mapAttrsToList optional;
+  inherit (builtins) concatStringsSep readFile elem concatMap toJSON;
+  inherit (kor) optionalString optionals mkIf mapAttrsToList optional optionalAttrs;
+
   inherit (krimyn.spinyrz) izUniksDev saizAtList iuzColemak;
   inherit (hyraizyn) astra;
+
+  inherit (pkgs) writeText;
   inherit (uyrld) vimPloginz;
 
   aolPloginz = pkgs.vimPlugins // vimPloginz;
@@ -34,6 +37,7 @@ let
     vim-snippets
     bufferize-vim
     minimap-vim
+    hop-nvim
   ];
 
   maxVimlPlogins = with aolPloginz; [
@@ -58,7 +62,8 @@ let
     completion-buffers
     nvim-treesitter
     nvim-treesitter-refactor
-    barbar-nvim
+    nvim-treesitter-textobjects
+    nvim-bufferline-lua
     telescope-nvim
     FTerm-nvim
     neogit # bogi
@@ -68,6 +73,7 @@ let
     nvim-fzf
     nvim-fzf-commands
     kommentary
+    galaxyline-nvim
   ];
 
   medLuaPloginz = with vimPloginz; [
@@ -75,7 +81,6 @@ let
     lsp-status-nvim
     nvim-lspfuzzy
     nvim-web-devicons
-    galaxyline-nvim
     nvim-colorizer-lua
     nvim-base16-lua
     nvim-lazygit
@@ -85,14 +90,13 @@ let
 
   maxLuaPloginz = with vimPloginz; [
     lspsaga-nvim
-    nvim-treesitter-context
   ];
 
   izLight = darkOrLight == "light";
 
   themeKod =
     let
-      lightTheme = "gruvbox-light-hard";
+      lightTheme = "cupertino";
       darkTheme = "bright";
       theme = if izLight then lightTheme else darkTheme;
     in
@@ -136,7 +140,7 @@ let
   pylsPath = "${pkgs.python3Packages.python-language-server}/bin/pyls";
   luaLSPath = "${uyrld.luaLS.lua-lsp}/bin/lua-lsp";
 
-  minKod = ''
+  minKod = (readFile ./min.lua) + ''
     require'nvim-treesitter.configs'.setup {
       incremental_selection = {
         keymaps = {
@@ -153,7 +157,16 @@ let
   '';
 
   medLangServers = {
-    rust_analyzer = { cmd = [ raPath ]; };
+    rust_analyzer = {
+      cmd = [ raPath ];
+      capabilities = { };
+      settings.rust-analyzer = {
+        procMacro.enable = true;
+        cargo = { loadOutDirsFromCheck = true; };
+        diagnostics.disabled = [ "unresolved-proc-macro" ];
+      };
+    };
+
     rnix = { cmd = [ "${uyrld.rnix-lsp}/bin/rnix-lsp" ]; };
     clangd = { cmd = [ clangdPath "--background-index" ]; };
     # cmake = { cmd = [ cmakeLSPath ]; }; # broken
@@ -165,52 +178,10 @@ let
     hls = { cmd = [ hlsWrapperPath "--lsp" ]; };
   };
 
-  mkLSKod = name: value@{ iuzHak ? true, ... }:
-    let
-      cmd = concatStringsSep "\", \"" value.cmd;
-    in
-    ''
-      lspconfig.${name}.setup {
-        cmd = { "${cmd}" };
-    '' + optionalString iuzHak ''
-      capabilities = vim.tbl_deep_extend('force',
-      default_capabilities,
-      {
-        codeAction = {
-          dynamicRegistration = false;
-          codeActionLiteralSupport = {
-            codeActionKind = {
-              valueSet = {
-                 "", "quickfix", "refactor", "refactor.extract",
-                 "refactor.inline", "refactor.rewrite",
-                 "source", "source.organizeImports",
-              };
-            };
-          };
-        };
-        textDocument = {
-          completion = {
-            completionItem = {
-              snippetSupport = true,
-            };
-          };
-        };
-      })
-    '' + ''
-      };
-    '';
-
-  mapLSzKod = LSz: ''
-    local default_capabilities = vim.lsp.protocol.make_client_capabilities()
-  ''
-  + (concatStringsSep "\n" (mapAttrsToList mkLSKod LSz));
+  langServers = medLangServers
+    // (optionalAttrs saizAtList.max maxLangServers);
 
   medKod = ''
-    local lspconfig = require'lspconfig'
-    ${mapLSzKod medLangServers}
-
-     vim.g.sql_clib_path = '${pkgs.sqlite.out}/lib/libsqlite3.so'
-
     vim.g.UltiSnipsJumpBackwardTrigger = '<c-h>'
   '' + (if iuzColemak then ''
     vim.g.UltiSnipsJumpForwardTrigger = '<c-i>'
@@ -219,7 +190,6 @@ let
   '');
 
   maxKod = ''
-    ${mapLSzKod maxLangServers}
     vim.g.gitblame_enabled  = 0
     require('lspsaga').init_lsp_saga()
   '';
@@ -230,7 +200,62 @@ let
 
   maxLuaKod = maxKod;
 
-  initLuaKod = (readFile ./vimLib.lua)
+  lsp_capabilities = {
+    codeAction = {
+      dynamicRegistration = false;
+      codeActionLiteralSupport = {
+        codeActionKind = {
+          valueSet = [
+            "quickfix"
+            "refactor"
+            "refactor.extract"
+            "refactor.inline"
+            "refactor.rewrite"
+            "source"
+            "source.organizeImports"
+          ];
+        };
+      };
+    };
+    textDocument = {
+      completion = { completionItem = { snippetSupport = true; }; };
+    };
+  };
+
+  nioviNiks = {
+    inherit lsp_capabilities langServers saizAtList;
+  };
+
+  nioviNiksFile = writeText "niovi-niks.json" (toJSON nioviNiks);
+  niksPathLuaKod = ''
+    local niks_path = '${nioviNiksFile}'
+  '';
+
+  luaModz = [ ];
+  luaCModz = [ pkgs.luajit.pkgs.rapidjson ];
+
+  mkLuaCPath = drv: "${drv}/lib/lua/${drv.lua.luaversion}/?.so";
+
+  mkLuaPaths = drv: [
+    "${drv}/share/lua/${drv.lua.luaversion}/?.lua"
+    "${drv}/share/lua/${drv.lua.luaversion}/?/init.lua"
+  ];
+
+  luaModulesPaths = concatStringsSep ";"
+    (optionals (luaModz != [ ]) (concatMap mkLuaPaths luaModz));
+
+  luaCModulesPaths = concatStringsSep ";"
+    (optionals (luaCModz != [ ]) (map mkLuaCPath luaCModz));
+
+  loadLuaPathsKod = optionalString (luaModz != [ ]) ''
+    package.path = package.path .. ";" .. [[${luaModulesPaths}]]
+  '' + optionalString (luaCModz != [ ]) ''
+    package.cpath = package.cpath .. ";" .. [[${luaCModulesPaths}]]
+  '';
+
+  initLuaKod = loadLuaPathsKod
+    + niksPathLuaKod
+    + (readFile ./vimLib.lua)
     + (readFile ./niovi.lua)
     + (optionalString iuzColemak readFile ./colemak.lua)
     + (readFile ./mappings.lua)
@@ -239,24 +264,23 @@ let
     + treesitterParserz
     + (readFile ./treesitter.lua)
     + minKod
-    + (readFile ./min.lua)
     + themeKod
     + (readFile ./galaxyline.lua)
     + (optionalString (izUniksDev && saizAtList.med)
     (medLuaKod + optionalString saizAtList.max maxLuaKod));
 
-  luaVimrc = pkgs.writeText "vimrc.lua" initLuaKod;
+  luaVimrc = writeText "vimrc.lua" initLuaKod;
 
   minPackages = with pkgs; [ ];
 
   medPackages = with pkgs; [
-    w3m-nographics
+    uyrld.crate2nix
     llvmPackages_latest.clang
     universal-ctags
     go
     neovim-remote
     uyrld.nixpkgs-fmt
-    sqlite
+    uyrld.LuaFormatter
   ];
 
   maxPackages = with pkgs; [ ghc cabal-install stack ];

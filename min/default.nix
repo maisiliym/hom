@@ -16,12 +16,6 @@ let
     { nativeBuildInputs = [ uyrld.zoxide ]; }
     "zoxide init zsh > $out";
 
-  fzf-tab = fetchTree {
-    type = "git";
-    url = file:///git/github.com/Aloxaf/fzf-tab;
-    rev = "78b4cefb27dc2bef5e4c9ac3bf2bd28413620fcd";
-  };
-
   fzfBinds = [ ];
   fzfColemakBinds = import ./fzfColemak.nix;
 
@@ -207,7 +201,7 @@ in
           if [[ $options[zle] = on ]]; then
           . ${ovyridynFzf}/share/fzf/completion.zsh
           . ${ovyridynFzf}/share/fzf/key-bindings.zsh
-          . ${fzf-tab}/fzf-tab.zsh
+          . ${pkgs.zsh-fzf-tab}/share/fzf-tab/fzf-tab.zsh
           fi
         ''
         + (readFile zoxideZshInit)
