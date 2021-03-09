@@ -73,7 +73,7 @@ let
     nvim-fzf
     nvim-fzf-commands
     kommentary
-    galaxyline-nvim
+    express_line-nvim
   ];
 
   medLuaPloginz = with vimPloginz; [
@@ -265,7 +265,7 @@ let
     + (readFile ./treesitter.lua)
     + minKod
     + themeKod
-    + (readFile ./galaxyline.lua)
+    + (readFile ./expressline.lua)
     + (optionalString (izUniksDev && saizAtList.med)
     (medLuaKod + optionalString saizAtList.max maxLuaKod));
 
