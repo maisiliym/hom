@@ -96,7 +96,7 @@ let
 
   themeKod =
     let
-      lightTheme = "cupertino";
+      lightTheme = "google-light";
       darkTheme = "bright";
       theme = if izLight then lightTheme else darkTheme;
     in
