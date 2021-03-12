@@ -1,8 +1,9 @@
-{ kor, hyraizyn, krimyn, input, uyrld, hob }:
+argz@{ kor, hyraizyn, krimyn, input, uyrld, hob }:
 let
   inherit (kor) optional;
+  inherit (argz.uyrld) pkdjz;
   inherit (krimyn.spinyrz) saizAtList;
-  inherit (uyrld) home-manager;
+  inherit (pkdjz) home-manager;
   inherit (home-manager.extendedLib) evalModules;
 
   beisModule = import ./beisModule.nix;
@@ -15,9 +16,11 @@ let
 
   darkOrLight = if input.dark then "dark" else "light";
 
+  uyrld = argz.uyrld // pkdjz; /* Lazy Hak */
+
   argzModule = {
     _module.args = {
-      inherit kor uyrld hob darkOrLight krimyn hyraizyn;
+      inherit kor pkdjz uyrld hob darkOrLight krimyn hyraizyn;
     };
   };
 
