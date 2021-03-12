@@ -2,7 +2,7 @@
 let
   inherit (builtins) readFile toJSON;
   inherit (kor) optionalString optionals;
-  inherit (uyrld) toFormat;
+  inherit (uyrld) kynvyrt;
   inherit (krimyn.spinyrz) izUniksDev iuzColemak;
 
   inherit (pkgs) mksh;
@@ -108,14 +108,15 @@ in
         gitProtocol = "ssh";
       };
 
-      ".config/rustfmt/rustfmt.toml".source = toFormat {
+      ".config/rustfmt/rustfmt.toml".source = kynvyrt {
         neim = "rustfmt.toml";
+        format = "toml";
         valiu = {
           edition = "2021";
         };
       };
 
-      ".config/luaformatter/config.yaml".source = toFormat {
+      ".config/luaformatter/config.yaml".source = kynvyrt {
         neim = "luaFormatterConfig.yaml";
         format = "yaml";
         valiu = {

@@ -2,7 +2,7 @@
 let
   inherit (builtins) concatStringsSep toString readFile toJSON;
   inherit (kor) optionalString optionals mkIf mapAttrsToList;
-  inherit (uyrld) toFormat;
+  inherit (uyrld) kynvyrt;
   inherit (hyraizyn) astra;
   inherit (krimyn.spinyrz) iuzColemak hazPriKriom
     gitSigningKey matrixID saizAtList izUniksDev;
@@ -220,8 +220,9 @@ in
         [[ -n "$PS1" ]] && SHELL=${zshEksek} exec ${zshEksek}
       '';
 
-      ".cargo/config.toml".source = toFormat {
+      ".cargo/config.toml".source = kynvyrt {
         neim = "cargo-config";
+        format = "toml";
         valiu = {
           build.target-dir = "${homeDir}/.cargo/sharedTarget";
           registries.crates-io.index = "file:///hob/github.com/rust-lang/crates.io-index/.git";
