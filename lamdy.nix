@@ -14,7 +14,7 @@ let
     ++ (optional saizAtList.med (import ./med))
     ++ (optional saizAtList.max (import ./max));
 
-  darkOrLight = if input.dark then "dark" else "light";
+  darkOrLight = if input.tyrget.dark then "dark" else "light";
 
   uyrld = argz.uyrld // pkdjz; /* Lazy Hak */
 
