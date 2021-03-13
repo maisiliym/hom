@@ -178,8 +178,10 @@ let
     hls = { cmd = [ hlsWrapperPath "--lsp" ]; };
   };
 
-  langServers = medLangServers
-    // (optionalAttrs saizAtList.max maxLangServers);
+  langServers = optionalAttrs izUniksDev (
+    (optionalAttrs saizAtList.med medLangServers) //
+    (optionalAttrs saizAtList.max maxLangServers)
+  );
 
   medKod = ''
     vim.g.UltiSnipsJumpBackwardTrigger = '<c-h>'
