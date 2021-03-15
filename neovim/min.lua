@@ -51,6 +51,13 @@ require'bufferline'.setup()
 
 niovi.fozi = require('fzf-commands')
 
+local configure_comments = require('kommentary.config').configure_language
+
+configure_comments("nix", {
+  single_line_comment_string = "#",
+  multi_line_comment_strings = { "/*", "*/" }
+})
+
 g.nvim_tree_quit_on_open = 1
 g.nvim_tree_hide_dotfiles = 1
 g.nvim_tree_width_allow_resize = 1
