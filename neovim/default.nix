@@ -119,17 +119,6 @@ let
   treeGrammars = pkgs.tree-sitter.builtGrammars;
   treesitterParserz = ''
     vim.treesitter.require_language("rust", [[${treeGrammars.tree-sitter-rust}/parser]])
-    vim.treesitter.require_language("c", [[${treeGrammars.tree-sitter-c}/parser]])
-    vim.treesitter.require_language("cpp", [[${treeGrammars.tree-sitter-cpp}/parser]])
-    vim.treesitter.require_language("go", [[${treeGrammars.tree-sitter-go}/parser]])
-    vim.treesitter.require_language("html", [[${treeGrammars.tree-sitter-html}/parser]])
-    vim.treesitter.require_language("java", [[${treeGrammars.tree-sitter-java}/parser]])
-    vim.treesitter.require_language("javascript", [[${treeGrammars.tree-sitter-javascript}/parser]])
-    vim.treesitter.require_language("json", [[${treeGrammars.tree-sitter-json}/parser]])
-    vim.treesitter.require_language("lua", [[${treeGrammars.tree-sitter-lua}/parser]])
-    vim.treesitter.require_language("php", [[${treeGrammars.tree-sitter-php}/parser]])
-    vim.treesitter.require_language("python", [[${treeGrammars.tree-sitter-python}/parser]])
-    vim.treesitter.require_language("nix", [[${treeGrammars.tree-sitter-nix}/parser]])
   '';
 
   raPath = "${uyrld.rust-analyzer}/bin/rust-analyzer";
