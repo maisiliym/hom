@@ -81,6 +81,7 @@ let
     curl
     wget
     transmission
+    aria2 # multi-protocol download
     rsync
     nload
     nmap

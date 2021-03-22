@@ -83,7 +83,6 @@ in
       # start('pythonPackages')
       youtube-dl
       # C/C++
-      aria2 # multi-protocol download
       imagemagick
       flite
       opusTools
