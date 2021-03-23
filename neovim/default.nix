@@ -6,7 +6,7 @@ let
   inherit (krimyn.spinyrz) izUniksDev saizAtList iuzColemak;
   inherit (hyraizyn) astra;
 
-  inherit (pkgs) writeText;
+  inherit (pkgs) parinfer-rust writeText;
   inherit (uyrld) vimPloginz;
 
   aolPloginz = pkgs.vimPlugins // vimPloginz;
@@ -17,6 +17,7 @@ let
     fzf-vim
     zoxide-vim
     astronauta-nvim
+    parinfer-rust
   ];
 
   medVimlPlogins = with aolPloginz; [
