@@ -17,10 +17,11 @@ let
     fzf-vim
     zoxide-vim
     astronauta-nvim
-    parinfer-rust
+    # parinfer-rust # WOW! This thing is fucked! @ v0.4.3
   ];
 
   medVimlPlogins = with aolPloginz; [
+    vim-parinfer
     nvim-yarp # UpdateRemotePlugin replacement
     gina-vim # git
     vista-vim # Tags
