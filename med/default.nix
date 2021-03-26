@@ -82,8 +82,9 @@ in
       taskwarrior
       # start('pythonPackages')
       youtube-dl
-      ocrmypdf
+      # ocrmypdf
       # C/C++
+      tesseract4
       imagemagick
       flite
       opusTools
