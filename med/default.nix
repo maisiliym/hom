@@ -82,6 +82,7 @@ in
       taskwarrior
       # start('pythonPackages')
       youtube-dl
+      ocrmypdf
       # C/C++
       imagemagick
       flite
