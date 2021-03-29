@@ -32,3 +32,5 @@ endfunction
 command! -bar -bang ContentRg call ContentRg(<bang>0)
 command! -bar -bang TypedRg call TypedRg(<bang>0)
 command! -bar -bang ParentRg call ParentRg(<bang>0)
+
+vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
