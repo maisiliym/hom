@@ -17,7 +17,7 @@ let
     fzf-vim
     zoxide-vim
     astronauta-nvim
-    # parinfer-rust # WOW! This thing is fucked! @ v0.4.3
+    guile-vim
   ];
 
   medVimlPlogins = with aolPloginz; [
