@@ -18,6 +18,7 @@ let
     zoxide-vim
     astronauta-nvim
     guile-vim
+    vim-shen
   ];
 
   medVimlPlogins = with aolPloginz; [
