@@ -32,6 +32,7 @@ let
     sdcv # cli dictionary
     jq
     tizonia-openmax-il
+    djvulibre
     #== go
     ghq
     elvish
