@@ -103,10 +103,6 @@ require('telescope').setup {
 niovi.telescope = require('telescope.builtin')
 
 -- start('completion')
-imap('<tab>', [[<Plug>(completion_smart_tab)]])
-imap('<s-tab>', [[<Plug>(completion_smart_s_tab)]])
-inoremapExpr('<Tab>', [[pumvisible() ? "\<C-n>" : "\<Tab>"]])
-inoremapExpr('<S-Tab>', [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]])
 command('set shortmess+=c')
 o.completeopt = [[noinsert,menuone,noselect]]
 g.completion_enable_auto_popup = 1
