@@ -105,12 +105,13 @@ niovi.telescope = require('telescope.builtin')
 -- start('completion')
 command('set shortmess+=c')
 o.completeopt = [[noinsert,menuone,noselect]]
+command([[autocmd BufEnter * lua require'completion'.on_attach()]])
+g.completion_confirm_key = [[\<C-J>]]
 g.completion_enable_auto_popup = 1
 g.completion_timer_cycle = 120
 g.completion_enable_auto_paren = 1
 g.completion_enable_snippet = 'UltiSnips'
 g.completion_auto_change_source = 1
-command([[autocmd BufEnter * lua require'completion'.on_attach()]])
 g.completion_chain_complete_list = {
   default = {
     default = {

@@ -1,3 +1,4 @@
+inoremap("<CR>", "<ESC>")
 -- Leader
 command([[let mapleader = "\<Space>"]])
 command([[let maplocalleader = ","]])
