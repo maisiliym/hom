@@ -111,6 +111,7 @@ let
     lshw
     gptfdisk
     parted # Disk utils
+    avrdude
   ] ++ (optionals (astra.mycin.ark == "x86-64") [
     i7z
   ]));
