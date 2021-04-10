@@ -45,6 +45,8 @@ let
     git-series
     tree-sitter
     gitAndTools.gitui
+    # Python
+    uyrld.kibord.kpBootCli
     # Manuals
     unbound.man
   ];
