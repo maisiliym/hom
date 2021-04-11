@@ -46,6 +46,16 @@ argz: with argz; ''
   '' # TODO - get model info in home closure. this is thinkpad x240 specific
   }
 
+  input "65261:58893:K.T.E.C._ErgoDone" {
+    xkb_layout us
+    xkb_variant basic
+  }
+
+  input "65261:58893:K.T.E.C._ErgoDone_Keyboard" {
+    xkb_layout us
+    xkb_variant basic
+  }
+
   # ## Key bindings
   # ### Basics:
   # start a shell
